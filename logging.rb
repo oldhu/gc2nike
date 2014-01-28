@@ -23,7 +23,7 @@ module Logging
   # Global, memoized, lazy initialized instance of a logger
   def self.logger
     return @logger unless @logger.nil?
-    log_file = File.open("gc2nike.log", "a")
+    log_file = Logger::LogDevice.new('gc2nike.log', :shift_age => 10, :shift_size => 1024000)
     @logger = Logger.new MultiIO.new(STDOUT, log_file)
     @logger.sev_threshold = Logger::INFO
     return @logger
