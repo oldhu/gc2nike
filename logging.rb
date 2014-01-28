@@ -26,5 +26,6 @@ module Logging
     log_file = File.open("gc2nike.log", "a")
     @logger = Logger.new MultiIO.new(STDOUT, log_file)
     @logger.sev_threshold = Logger::INFO
+    return @logger
   end
 end

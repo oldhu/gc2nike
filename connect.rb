@@ -5,15 +5,14 @@ require 'json'
 require './activity'
 require './logging'
 
-# http://connect.garmin.com/proxy/activity-search-service-1.2/json/activities?beginTimestamp%3E2014-01-17T04:43:39.000Z
-
 class Connect
     include Logging
 
     BASE_PATH = 'https://connect.garmin.com'
     BASE_URI = URI(BASE_PATH)
     LOGIN_PATH = "#{BASE_PATH}/signin/"
-    QUERY_PATH = "#{BASE_PATH}/proxy/activity-search-service-1.2/json/activities?start=%d"
+    QUERY_PATH = "#{BASE_PATH}/proxy/activity-search-service-1.2/json/activities?"
+    QUERY_TIME_PATH = "#{BASE_PATH}/proxy/activity-search-service-1.2/json/activities?activitySummaryBeginTimestampGmt>%s&"
     TCX_PATH = "#{BASE_PATH}/proxy/activity-service-1.0/tcx/activity/%d?full=true"
 
     def initialize(user, pass)
@@ -39,18 +38,32 @@ class Connect
         end
     end
 
-    def each_activity()
+    def each_activity_with_query(query)
+        query = query + "start=%d"
         start = 0
         while true do
-            logger.info "querying garmin #{QUERY_PATH % start}"
-            res = @agent.get(QUERY_PATH % start)
-            activities = JSON.parse(res.content)['results']
-            return if activities['activities'].length == 0
+            logger.info "querying garmin #{query % start}"
+            res = @agent.get(query % start)
+            activities = JSON.parse(res.content)['results']['activities']
+            logger.info "retrieved #{activities.length} activities"
+            return if activities.length == 0
 
-            activities['activities'].each do |activity|
+            activities.each do |activity|
                 yield activity['activity']['activityId']
                 start += 1
             end
+        end
+    end
+
+    def each_activity()
+        each_activity_with_query(QUERY_PATH) do |x|
+            yield x
+        end
+    end
+
+    def each_activity_after(time)
+        each_activity_with_query(QUERY_TIME_PATH % time) do |x|
+            yield x
         end
     end
 
