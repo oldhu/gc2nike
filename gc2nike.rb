@@ -21,11 +21,11 @@ con.each_activity_after(read_progress) do |id|
     logger.info "downloading activity #{id}"
     tcx = con.get_tcx(id)
     data = Activity.new.parse_tcx(tcx)
-    # run, gpx = nike.build_xml(data)
-    # nike.send(run, gpx)
+    run, gpx = nike.build_xml(data)
+    nike.send(run, gpx)
     save_progress(data[0])
     break
 end
 
-# nike.complete
+nike.complete
 

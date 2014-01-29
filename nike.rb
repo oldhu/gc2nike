@@ -132,12 +132,15 @@ class Nike
     def send(run, gpx)
         logger.info "sending run xml and gpx xml"
         begin
+            if gpx.nil? then
+                payload = { 'runXML' => BinaryIO.new(run, 'runXML.xml') }
+            else
+                payload = { 'runXML' => BinaryIO.new(run, 'runXML.xml'),
+                            'gpxXML' => BinaryIO.new(gpx, 'gpxXML.xml') 
+                          }
+            end
             res = @agent.post(
-                SYNC_PATH % @accessToken, 
-                {
-                    'runXML' => BinaryIO.new(run, 'runXML.xml'),
-                     gpx.nil? ? nil : 'gpxXML' => BinaryIO.new(gpx, 'gpxXML.xml') 
-                },
+                SYNC_PATH % @accessToken, payload,
                 {
                     'user-agent' => USER_AGENT,
                     'appid' => 'NIKEPLUSGPS',
