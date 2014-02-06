@@ -136,8 +136,7 @@ class Nike
                 payload = { 'runXML' => BinaryIO.new(run, 'runXML.xml') }
             else
                 payload = { 'runXML' => BinaryIO.new(run, 'runXML.xml'),
-                            'gpxXML' => BinaryIO.new(gpx, 'gpxXML.xml') 
-                          }
+                            'gpxXML' => BinaryIO.new(gpx, 'gpxXML.xml') }
             end
             res = @agent.post(
                 SYNC_PATH % @accessToken, payload,

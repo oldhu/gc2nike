@@ -16,20 +16,20 @@ def read_progress
     File.read("gc2nike.last")
 end
 
-logger.info "=" * 80
+logger.info "=" * 60
 
 con = Connect.new(GC_USER, GC_PASSWORD)
-nike = Nike.new(NIKE_USER, NIKE_PASSWORD)
+nike = nil
 
 con.each_activity_after(read_progress) do |id|
+    nike ||= Nike.new(NIKE_USER, NIKE_PASSWORD)
     logger.info "downloading activity #{id}"
     tcx = con.get_tcx(id)
     data = Activity.new.parse_tcx(tcx)
     run, gpx = nike.build_xml(data)
     nike.send(run, gpx)
     save_progress(data[0])
-    break
 end
 
-nike.complete
+nike.complete unless nike.nil?
 
