@@ -3,6 +3,8 @@ require './nike'
 require './activity'
 require './logging'
 
+require './config'
+
 include Logging
 
 def save_progress(time)
@@ -14,8 +16,10 @@ def read_progress
     File.read("gc2nike.last")
 end
 
-con = Connect.new('hhhhtj', 'deqrpl')
-nike = Nike.new('hutiejun@gmail.com', 'Deqrpl8613')
+logger.info "=" * 80
+
+con = Connect.new(GC_USER, GC_PASSWORD)
+nike = Nike.new(NIKE_USER, NIKE_PASSWORD)
 
 con.each_activity_after(read_progress) do |id|
     logger.info "downloading activity #{id}"
