@@ -75,7 +75,7 @@ class Nike
     end
 
     def build_run_xml(data)
-        logger.info "building rum xml"
+        logger.info "building run xml"
         startTime = Time.parse(data[0]).strftime("%FT%T+00:00")
 
         doc = REXML::Document.new
