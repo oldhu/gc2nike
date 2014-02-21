@@ -1,0 +1,28 @@
+<div class="col-sm-2"></div>
+<div id="login" class="col-sm-8">
+  <br/>
+  <p class="lead">Sign in with your Nike+ email/password. If it's your first time login, account will be created.</p>
+  <% if @err %>
+    <div class="alert alert-danger"><%= @err %></div>
+  <% end %>
+  <%= form_for :login, method: :post do |f| %>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" class="form-control" id="email" name="email" placeholder="Nike+ login email address" value="<%= @email %>"/>
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" class="form-control" id="password" name="password" placeholder="Nike+ login password" value="<%= @password %>"/>
+    </div>
+    <div class="form-group">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" name="remember" value="1" checked> Remember me
+        </label>
+      </div>
+    </div>
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary" name="login">Sign in</button>
+    </div>
+  <% end %>
+</div>

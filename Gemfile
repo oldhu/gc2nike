@@ -46,6 +46,8 @@ end
 # gem 'debugger', group: [:development, :test]
 
 gem 'bootstrap-sass'
+gem 'authlogic'
+gem 'mechanize'
 
 group :development do
   gem 'rails_layout'

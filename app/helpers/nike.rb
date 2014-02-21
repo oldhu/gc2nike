@@ -1,8 +1,8 @@
-require 'rubygems'
-require 'mechanize'
-require 'json'
+# require 'rubygems'
+# require 'mechanize'
+# require 'json'
 
-require './logging'
+# require './logging'
 
 class Mechanize
   def post(uri, query = {}, headers = {})
@@ -71,6 +71,7 @@ class Nike
             { 'email' => user, 'password' => pass }, 
             { 'user-agent' => USER_AGENT, 'Accept' => 'application/json' } )
         @accessToken = JSON.parse(res.content)['access_token']
+        raise "cannot get access token" if @accessToken.nil?
         logger.info "got access token"
     end
 

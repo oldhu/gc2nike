@@ -2,13 +2,14 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= content_for?(:title) ? yield(:title) : "Gc2nike" %></title>
-    <meta name="description" content="<%= content_for?(:description) ? yield(:description) : "Gc2nike" %>">
+    <title><%= content_for?(:title) ? yield(:title) : "Garmin Connect to Nike Plus Sync Service" %></title>
+    <meta name="description" content="<%= content_for?(:description) ? yield(:description) : "Garmin Connect to Nike Plus Sync Service" %>">
     <%= stylesheet_link_tag "application", media: "all", "data-turbolinks-track" => true %>
     <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
     <%= csrf_meta_tags %>
   </head>
   <body>
+    <div class="container">
     <header>
       <%= render 'layouts/navigation' %>
     </header>
@@ -16,5 +17,6 @@
        <%= render 'layouts/messages' %>
        <%= yield %>
     </main>
+    </div>
   </body>
 </html>
