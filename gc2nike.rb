@@ -7,8 +7,8 @@ require './config'
 
 include Logging
 
-def save_progress(time)
-    File.open("gc2nike.last", "w") { |f| f.write(time) }
+def save_progress(id)
+    File.open("gc2nike.last", "w") { |f| f.write(id) }
 end
 
 def read_progress
@@ -18,17 +18,19 @@ end
 
 logger.info "=" * 60
 
-con = Connect.new(GC_USER, GC_PASSWORD)
+con = Connect.new
 nike = nil
 
-con.each_activity_after(read_progress) do |id|
+activity_id = read_progress || ACTIVITY_ID
+
+con.each_activity_after_activity(activity_id) do |id|
     nike ||= Nike.new(NIKE_USER, NIKE_PASSWORD)
     logger.info "downloading activity #{id}"
     tcx = con.get_tcx(id)
     data = Activity.new.parse_tcx(tcx)
     run, gpx = nike.build_xml(data)
     nike.send(run, gpx)
-    save_progress(data[0])
+    save_progress(id)
 end
 
 nike.complete unless nike.nil?

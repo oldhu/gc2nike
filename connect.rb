@@ -15,9 +15,33 @@ class Connect
     QUERY_TIME_PATH = "#{BASE_PATH}/proxy/activity-search-service-1.2/json/activities?activitySummaryBeginTimestampGmt>%s&"
     TCX_PATH = "#{BASE_PATH}/proxy/activity-service-1.0/tcx/activity/%d?full=true"
 
+    ACTIVITY_PATH = 'http://connect.garmin.com/activity/%s'
+    RELATIVE_PATH = 'http://connect.garmin.com/proxy/activity-search-service-1.1/json/activityrelative?userId=%s&startPointKey=activitySummaryBeginTimestampGmt&startPointValue=%s'
+
+
     def initialize(user, pass)
         @agent = Mechanize.new { |a| a.ssl_version, a.verify_mode = 'SSLv3', OpenSSL::SSL::VERIFY_NONE }
         login(user, pass)    
+    end
+
+    def initialize
+        @agent = Mechanize.new { |a| a.ssl_version, a.verify_mode = 'SSLv3', OpenSSL::SSL::VERIFY_NONE }
+    end
+
+    def each_activity_after_activity(activity)
+        logger.info "loading #{ACTIVITY_PATH % activity}"
+        page = @agent.get(ACTIVITY_PATH % activity)
+        while true do
+            userId = /USER_ID = '(\d*)'/.match(page.content)[1]
+            bts = /BEGIN_TIMESTAMP = '(.*)'/.match(page.content)[1]
+            logger.info "got USER_ID #{userId} BEGIN_TIMESTAMP #{bts}"
+            res = @agent.get(RELATIVE_PATH % [userId, bts])
+            next_activity = JSON.parse(res.content)['activityRelative']['next']
+            return unless next_activity
+            yield next_activity
+            logger.info "loading #{ACTIVITY_PATH % next_activity}"
+            page = @agent.get(ACTIVITY_PATH % next_activity)
+        end
     end
 
     def login(user, password)
@@ -68,6 +92,7 @@ class Connect
     end
 
     def get_tcx(id)
+        logger.info "downloading tcx for activity #{id}"
         res = @agent.get(TCX_PATH % id)
         return res.content
     end
