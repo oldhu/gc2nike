@@ -1,3 +1,8 @@
 gc2nike.last
 gc2nike.log
 config.rb
+app/
+bin/
+db/
+log/
+tmp/
