@@ -10,9 +10,16 @@ include Logging
 abort "need last activity id" unless ARGV.length > 0
 activity_id = ARGV[0]
 
+def get_tcx_date(tcx)
+  data = Activity.new.parse_tcx_header(tcx)
+  return data[0][0,10]
+end
+
 def download_tcx(con, id)
     tcx = con.get_tcx(id)
-    File.open("#{id}.tcx", "w") { |f| f.write(tcx) }    
+    return if tcx.nil?
+    date = get_tcx_date(tcx)
+    File.open("tcx/#{date}-#{id}.tcx", "w") { |f| f.write(tcx) }    
 end
 
 con = Connect.new

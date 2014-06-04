@@ -99,4 +99,19 @@ class Activity
         end
     end
 
+    def parse_tcx_header(tcx)
+        logger.info "parsing tcx file"
+        doc = REXML::Document.new(tcx)
+        if doc.elements["TrainingCenterDatabase"].nil? then
+            logger.warn "tcx invalid"
+            return
+        end
+        doc.elements.each("TrainingCenterDatabase/Activities/Activity") do |activity|
+            if activity.attributes['Sport'] == 'Running' then
+                startTime, totalSeconds, totalDistance, totalCalories = activity_header(activity)
+                return [startTime, totalSeconds, totalDistance, totalCalories]
+            end
+        end
+    end
+
 end

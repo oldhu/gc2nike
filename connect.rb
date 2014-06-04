@@ -108,9 +108,14 @@ class Connect
     end
 
     def get_tcx(id)
-        logger.info "downloading tcx for activity #{id}"
-        res = @agent.get(TCX_PATH % id)
-        return res.content
+        begin
+            logger.info "downloading tcx for activity #{id}"
+            res = @agent.get(TCX_PATH % id)
+            return res.content
+        rescue Mechanize::ResponseCodeError => e
+            logger.error "cannot download tcx for activity #{id}, error code #{e.response_code}"
+            return nil
+        end
     end
 
 end
