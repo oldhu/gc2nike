@@ -44,6 +44,22 @@ class Connect
         end
     end
 
+    def each_activity_before_activity(activity)
+        logger.info "loading #{ACTIVITY_PATH % activity}"
+        page = @agent.get(ACTIVITY_PATH % activity)
+        while true do
+            userId = /USER_ID = '(\d*)'/.match(page.content)[1]
+            bts = /BEGIN_TIMESTAMP = '(.*)'/.match(page.content)[1]
+            logger.info "got USER_ID #{userId} BEGIN_TIMESTAMP #{bts}"
+            res = @agent.get(RELATIVE_PATH % [userId, bts])
+            next_activity = JSON.parse(res.content)['activityRelative']['previous']
+            return unless next_activity
+            yield next_activity
+            logger.info "loading #{ACTIVITY_PATH % next_activity}"
+            page = @agent.get(ACTIVITY_PATH % next_activity)
+        end
+    end
+
     def login(user, password)
         logger.info "loading Garmin login page."
         @agent.get(LOGIN_PATH) do |page|
