@@ -34,7 +34,7 @@ class Connect
         while true do
             userId = /USER_ID = '(\d*)'/.match(page.content)[1]
             bts = /BEGIN_TIMESTAMP = '(.*)'/.match(page.content)[1]
-            logger.info "got USER_ID #{userId} BEGIN_TIMESTAMP #{bts}"
+            logger.debug "got USER_ID #{userId} BEGIN_TIMESTAMP #{bts}"
             res = @agent.get(RELATIVE_PATH % [userId, bts])
             next_activity = JSON.parse(res.content)['activityRelative']['next']
             return unless next_activity
@@ -50,7 +50,7 @@ class Connect
         while true do
             userId = /USER_ID = '(\d*)'/.match(page.content)[1]
             bts = /BEGIN_TIMESTAMP = '(.*)'/.match(page.content)[1]
-            logger.info "got USER_ID #{userId} BEGIN_TIMESTAMP #{bts}"
+            logger.debug "got USER_ID #{userId} BEGIN_TIMESTAMP #{bts}"
             res = @agent.get(RELATIVE_PATH % [userId, bts])
             next_activity = JSON.parse(res.content)['activityRelative']['previous']
             return unless next_activity

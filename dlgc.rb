@@ -35,7 +35,14 @@ end
 
 con = Connect.new
 
+logger.info "trying to find activity after #{activity_id}"
+last_id = nil
+
 con.each_activity_after_activity(activity_id) do |id|
+  logger.info "got activity #{activity_id}"
   download_tcx(con, id)
   save_progress(id)
+  last_id = id
 end
+
+logger.info "no activity found" unless last_id
