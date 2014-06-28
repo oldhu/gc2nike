@@ -28,8 +28,12 @@ con.each_activity_after_activity(activity_id) do |id|
     logger.info "downloading activity #{id}"
     tcx = con.get_tcx(id)
     data = Activity.new.parse_tcx(tcx)
-    run, gpx = nike.build_xml(data)
-    nike.send(run, gpx)
+    if data[4].length > 0 then
+        run, gpx = nike.build_xml(data)
+        nike.send(run, gpx)
+    else
+        logger.info "skip empty activity"
+    end
     save_progress(id)
 end
 

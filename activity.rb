@@ -72,8 +72,12 @@ class Activity
                 end
             end
         end
-        d, h = spline_every_10(time, distance, hr, totalDistance)
-        return d, h, tp
+        if time.length > 0 then
+            d, h = spline_every_10(time, distance, hr, totalDistance)
+            return d, h, tp
+        else
+            return [], [], []
+        end
     end
 
     def parse_tcx(tcx)
