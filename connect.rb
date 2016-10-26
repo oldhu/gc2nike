@@ -5,27 +5,31 @@ require 'json'
 require './activity'
 require './logging'
 
+I_KNOW_THAT_OPENSSL_VERIFY_PEER_EQUALS_VERIFY_NONE_IS_WRONG = nil
+OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
+
 class Connect
     include Logging
 
     BASE_PATH = 'https://connect.garmin.com'
+    BASE_HTTP_PATH = 'http://connect.garmin.com'
     BASE_URI = URI(BASE_PATH)
     LOGIN_PATH = "#{BASE_PATH}/signin/"
     QUERY_PATH = "#{BASE_PATH}/proxy/activity-search-service-1.2/json/activities?"
     QUERY_TIME_PATH = "#{BASE_PATH}/proxy/activity-search-service-1.2/json/activities?activitySummaryBeginTimestampGmt>%s&"
-    TCX_PATH = "#{BASE_PATH}/proxy/activity-service-1.0/tcx/activity/%d?full=true"
+    TCX_PATH = "#{BASE_HTTP_PATH}/proxy/activity-service-1.0/tcx/activity/%d?full=true"
 
     ACTIVITY_PATH = 'http://connect.garmin.com/activity/%s'
     RELATIVE_PATH = 'http://connect.garmin.com/proxy/activity-search-service-1.1/json/activityrelative?userId=%s&startPointKey=activitySummaryBeginTimestampGmt&startPointValue=%s'
 
 
     def initialize(user, pass)
-        @agent = Mechanize.new { |a| a.ssl_version, a.verify_mode = 'SSLv3', OpenSSL::SSL::VERIFY_NONE }
+        @agent = Mechanize.new { |a| a.ssl_version, a.verify_mode = 'TLSv1', OpenSSL::SSL::VERIFY_NONE }
         login(user, pass)    
     end
 
     def initialize
-        @agent = Mechanize.new { |a| a.ssl_version, a.verify_mode = 'SSLv3', OpenSSL::SSL::VERIFY_NONE }
+        @agent = Mechanize.new { |a| a.ssl_version, a.verify_mode = 'TLSv1', OpenSSL::SSL::VERIFY_NONE }
     end
 
     def each_activity_after_activity(activity)
